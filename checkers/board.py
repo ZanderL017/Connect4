@@ -20,11 +20,11 @@ class Board():
 
     def __repr__(self):
         s = ""
-        for row in self.grid:
-            s += ROW_TAGS[self.grid.index(row)]
+        for row_i in range(BOARD_LENGTH):
+            s += ROW_TAGS[row_i]
             s += " "
-            for piece in row:
-                s += str(piece) + " "
+            for col_i in range(BOARD_LENGTH):
+                s +=  str(self.grid[row_i][col_i]) + " "
             s += "\n"
         s += "  "
         for tag in COL_TAGS:
@@ -87,11 +87,12 @@ class Board():
         piece = self.get_piece(piece_coords)
 
         destination = self.next_coords(piece_coords, direction)
-        done_jumping = False
         
         # Normal Move
         if not self.is_piece(destination):
             self.set_piece(piece_coords, EMPTY_SQUARE)
+            if self.reached_end(destination):
+                piece.type = 'king'
             self.set_piece(destination, piece)
             return
         jumped_coords = destination
@@ -99,9 +100,11 @@ class Board():
             jump_dest = self.next_coords(jumped_coords, direction)
             self.set_piece(jumped_coords, EMPTY_SQUARE)
             jumped_coords = self.next_coords(jump_dest, direction)
-            if not self.is_piece(jumped_coords):
+            if not self.is_inbounds(jumped_coords) or not self.is_piece(jumped_coords):
                 break;
         self.set_piece(piece_coords, EMPTY_SQUARE)
+        if self.reached_end(jump_dest):
+                piece.type = 'king'
         self.set_piece(jump_dest, piece)
 
         
@@ -187,4 +190,7 @@ class Board():
 
     def set_piece(self, coords:Tuple[int, int], piece):
         self.grid[coords[0]][coords[1]] = piece
+
+    def reached_end(self, coords:Tuple[int, int]):
+        return coords[0] == 0
 

@@ -1,5 +1,6 @@
 from player import Player
 from board import Board
+import random
 
 class User(Player):
 
@@ -14,4 +15,10 @@ class User(Player):
             else:
                 print("Not a valid move.")
         return move
-        
+
+class RandomAgent(Player):
+
+    def get_move(self, board:Board):
+        possible_moves = board.possible_moves(self.identifier)
+        move = random.choice(possible_moves)
+        return move
