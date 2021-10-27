@@ -1,4 +1,5 @@
-from board import Board
+from .board import Board
+from .user import User
 
 class Checkers():
     
